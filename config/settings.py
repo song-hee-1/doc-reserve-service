@@ -44,10 +44,19 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
+PROJECT_APPS = [
 
-INSTALLED_APPS = [
+]
+
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'debug_toolbar',
+    'corsheaders',
+    'django_extensions',
+]
+
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,7 +65,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
