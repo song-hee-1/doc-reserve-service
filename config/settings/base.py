@@ -135,3 +135,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
+
+
+# REST_FRAMEWORK settings
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'core.exception_handler.custom_exception_handler',
+}
