@@ -22,8 +22,8 @@ from config import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/accounts', include('accounts.urls')),
-    path('api/clinics', include('clinics.urls')),
+    path('api/accounts/', include('accounts.urls')),
+    path('api/clinics/', include('clinics.urls')),
 ]
 
 
