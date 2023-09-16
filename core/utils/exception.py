@@ -6,6 +6,11 @@ class NoPermission(APIException):
     default_detail = "권한이 없습니다."
 
 
+class NotAllowAuthentication(APIException):
+    status_code = 403
+    default_detail = "인증된 유저는 사용할 수 없습니다."
+
+
 class UnAuthorized(APIException):
     status_code = 403
     default_detail = "인증되지 않았습니다."
@@ -24,5 +29,3 @@ class InvalidInput(APIException):
 class DoesNotExists(APIException):
     status_code = 400
     default_detail = "요청한 데이터가 존재하지 않습니다."
-
-
