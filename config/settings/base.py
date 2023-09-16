@@ -23,7 +23,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 PROJECT_APPS = [
-
+    'accounts.apps.AccountsConfig',
+    'clinics.apps.ClinicsConfig',
 ]
 
 THIRD_PARTY_APPS = [
