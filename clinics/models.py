@@ -114,4 +114,4 @@ class ClinicAppointment(TimeStampModel):
     expired_at = models.DateTimeField(help_text='진료 요청 만료 시간')
 
     def __str__(self):
-        return f"{self.doctor.name}의 진료 요청 - {self.desired_date.strftime('%Y-%m-%d %H:%M:%S')}"
+        return f"{self.doctor.name}님에게 {self.user.name}님이 진료 요청 - {self.desired_date.strftime('%Y-%m-%d %H:%M:%S')}"

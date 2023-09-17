@@ -22,3 +22,15 @@ class ClinicRequestAppointmentQsClinicAppointmentSerializer(ClinicAppointmentSer
     class Meta:
         model = ClinicAppointment
         fields = (*ClinicAppointmentSerializer.Meta.fields, 'patient_name', 'doctor_name',)
+
+
+class ClinicAppointmentListQsClinicAppointmentSerializer(ClinicAppointmentSerializer):
+    patient_name = serializers.CharField(source='user.name')
+
+    class Meta:
+        model = ClinicAppointment
+        fields = (*ClinicAppointmentSerializer.Meta.fields, 'patient_name',)
+
+
+class ClinicApproveAppointmentPostSerializer(serializers.Serializer):
+    appointment_id = serializers.IntegerField()

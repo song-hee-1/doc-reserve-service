@@ -1,6 +1,6 @@
 from clinics.models import Doctor, Clinic, DoctorSchedule, ClinicAppointment
 from clinics.serializers.clinic_serializer import ClinicSearchQsDoctorSerializer, \
-    ClinicRequestAppointmentQsClinicAppointmentSerializer
+    ClinicRequestAppointmentQsClinicAppointmentSerializer, ClinicAppointmentListQsClinicAppointmentSerializer
 from core.utils import exception
 from core.utils.base_service import BaseService
 from core.utils.time import KST
@@ -62,9 +62,9 @@ class ClinicService(BaseService):
             user = User.objects.get(id=user_id)
             doctor = Doctor.objects.get(id=doctor_id)
         except User.DoesNotExist:
-            return exception.DoesNotExists
+            raise exception.DoesNotExists
         except Doctor.DoesNotExist:
-            return exception.DoesNotExists
+            raise exception.DoesNotExists
 
         desired_datetime = datetime.datetime.fromisoformat(desired_date)
         desired_datetime = desired_datetime.replace(tzinfo=KST)
@@ -73,7 +73,7 @@ class ClinicService(BaseService):
         doctor_schedule = DoctorSchedule.objects.get(doctor=doctor_id, day=desired_weekday)
 
         if not doctor_schedule.start_time <= desired_datetime.time() <= doctor_schedule.end_time:
-            return exception.NotBusinessHours
+            raise exception.NotBusinessHours
 
         now = datetime.datetime.now(tz=KST)
         now_weekday = now.weekday()
@@ -90,7 +90,9 @@ class ClinicService(BaseService):
                 expired_at = datetime.datetime.combine(now.date(), doctor_schedule.lunch_end_time) \
                              + datetime.timedelta(minutes=15)
             else:
-                expired_at = datetime.datetime.combine(now.date(), now.time()) + datetime.timedelta(minutes=15)
+                expired_at = datetime.datetime.combine(
+                    now.date(), now.time()
+                ) + datetime.timedelta(minutes=20)
         else:  # 영업일이 아닐 때(휴무)
             all_schedules = DoctorSchedule.objects.filter(
                 doctor=doctor,
@@ -110,8 +112,9 @@ class ClinicService(BaseService):
 
             days_until_next = (recent_doctor_schedule.day - now_weekday) % 7
             next_business_date = now.date() + datetime.timedelta(days=days_until_next)
-            expired_at = datetime.datetime.combine(next_business_date, recent_doctor_schedule.start_time) + \
-                         datetime.timedelta(minutes=15)
+            expired_at = datetime.datetime.combine(
+                next_business_date, recent_doctor_schedule.start_time
+            ) + datetime.timedelta(minutes=15)
 
         clinic_appointment = ClinicAppointment.objects.create(
             user=user,
@@ -122,6 +125,32 @@ class ClinicService(BaseService):
         )
 
         serializer = ClinicRequestAppointmentQsClinicAppointmentSerializer(clinic_appointment)
+
+        return serializer.data
+
+    def list_appointment(self, doctor_id):
+        clinic_appoints = ClinicAppointment.objects.filter(
+            doctor_id=doctor_id,
+            status=ClinicAppointment.PENDING_APPROVE,
+        )
+
+        serializer = ClinicAppointmentListQsClinicAppointmentSerializer(clinic_appoints, many=True)
+        return serializer.data
+
+    def approve_appointment(self, data):
+        appointment_id = data.get('appointment_id')
+
+        clinic_appointment = ClinicAppointment.objects.get(id=appointment_id)
+
+        now = datetime.datetime.now(tz=KST)
+
+        if clinic_appointment.expired_at < now:
+            raise exception.InvalidInput
+
+        clinic_appointment.status = ClinicAppointment.COMPLETE
+        clinic_appointment.save(update_fields=['status'])
+
+        serializer = ClinicAppointmentListQsClinicAppointmentSerializer(clinic_appointment)
 
         return serializer.data
 
