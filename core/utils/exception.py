@@ -29,3 +29,8 @@ class InvalidInput(APIException):
 class DoesNotExists(APIException):
     status_code = 400
     default_detail = "요청한 데이터가 존재하지 않습니다."
+
+
+class NotBusinessHours(APIException):
+    status_code = 400
+    default_detail = "영업 시간이 아닙니다."

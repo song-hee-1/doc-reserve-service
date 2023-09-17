@@ -1,6 +1,10 @@
 from datetime import time
 from django.utils import timezone
-from clinics.models import Clinic, Speciality, Doctor, DoctorSchedule, ClinicAppointment, NonInsuredMedicalCategory
+from accounts.models import User
+from clinics.models import Clinic, Speciality, Doctor, DoctorSchedule, NonInsuredMedicalCategory
+
+# admin 생성
+user = User.objects.create_superuser(email="admin@offical.net", password="0000")
 
 # 병원 생성
 clinic = Clinic.objects.create(name="메라키병원")
@@ -29,19 +33,44 @@ doctor2 = Doctor.objects.create(
 doctor2.specialities.add(speciality2, speciality3)  # 의사의 진료과를 추가
 
 # 의사 스케줄 생성
-doctor1_days_off = ["Sat", "Sun"]  # 손웅래 의사의 휴무일 (토요일, 일요일)
-doctor2_days_off = ["Sun"]  # 선재원 의사의 휴무일 (일요일)
+doctor1_days_off = [DoctorSchedule.SATURDAY, DoctorSchedule.SUNDAY]  # 손웅래 의사의 휴무일 (토요일, 일요일)
+doctor2_days_off = [DoctorSchedule.SUNDAY]  # 선재원 의사의 휴무일 (일요일)
 
-for day in DoctorSchedule.DAY_CHOICES:
-    is_day_off_doctor1 = day[0] in doctor1_days_off
+for day in range(7):  # 0부터 6까지의 정수로 요일을 나타냄
+    is_day_off_doctor1 = day in doctor1_days_off
     reason_for_day_off_doctor1 = DoctorSchedule.REGULAR_DAY_OFF if is_day_off_doctor1 else ""
 
-    is_day_off_doctor2 = day[0] in doctor2_days_off
+    is_day_off_doctor2 = day in doctor2_days_off
     reason_for_day_off_doctor2 = DoctorSchedule.REGULAR_DAY_OFF if is_day_off_doctor2 else ""
 
+    # 선재원 의사의 토요일 스케줄 추가
+    if day == DoctorSchedule.SATURDAY:
+        DoctorSchedule.objects.create(
+            doctor=doctor2,
+            day=day,
+            start_time=timezone.make_aware(time(8, 0)),
+            end_time=timezone.make_aware(time(13, 0)),  # 오후 1시까지 영업
+            lunch_start_time=timezone.make_aware(time(12, 0)),
+            lunch_end_time=timezone.make_aware(time(13, 0)),
+            is_day_off=is_day_off_doctor2,
+            reason_for_day_off=reason_for_day_off_doctor2
+        )
+    else:
+        DoctorSchedule.objects.create(
+            doctor=doctor2,
+            day=day,
+            start_time=timezone.make_aware(time(8, 0)),
+            end_time=timezone.make_aware(time(17, 0)),
+            lunch_start_time=timezone.make_aware(time(12, 0)),
+            lunch_end_time=timezone.make_aware(time(13, 0)),
+            is_day_off=is_day_off_doctor2,
+            reason_for_day_off=reason_for_day_off_doctor2
+        )
+
+    # 손웅래 의사의 스케줄 추가
     DoctorSchedule.objects.create(
         doctor=doctor1,
-        day=day[0],
+        day=day,
         start_time=timezone.make_aware(time(9, 0)),
         end_time=timezone.make_aware(time(19, 0)),
         lunch_start_time=timezone.make_aware(time(11, 0)),
@@ -49,32 +78,6 @@ for day in DoctorSchedule.DAY_CHOICES:
         is_day_off=is_day_off_doctor1,
         reason_for_day_off=reason_for_day_off_doctor1
     )
-
-    DoctorSchedule.objects.create(
-        doctor=doctor2,
-        day=day[0],
-        start_time=timezone.make_aware(time(8, 0)),
-        end_time=timezone.make_aware(time(17, 0)),
-        lunch_start_time=timezone.make_aware(time(12, 0)),
-        lunch_end_time=timezone.make_aware(time(13, 0)),
-        is_day_off=is_day_off_doctor2,
-        reason_for_day_off=reason_for_day_off_doctor2
-    )
-
-# 진료 요청 생성
-appointment1 = ClinicAppointment.objects.create(
-    doctor=doctor1,
-    status=ClinicAppointment.PENDING_APPROVE,
-    desired_date=timezone.now(),
-    expired_at=timezone.now(),
-)
-
-appointment2 = ClinicAppointment.objects.create(
-    doctor=doctor2,
-    status=ClinicAppointment.PENDING_APPROVE,
-    desired_date=timezone.now(),
-    expired_at=timezone.now(),
-)
 
 # 진료과목 추가 (비급여 진료과목)
 non_insured_medical_category = NonInsuredMedicalCategory.objects.create(

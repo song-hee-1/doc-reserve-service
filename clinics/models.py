@@ -30,13 +30,13 @@ class DoctorSchedule(models.Model):
      의사의 진료 스케줄 정보를 저장
     """
 
-    MONDAY = 'Mon'
-    TUESDAY = 'Tue'
-    WEDNESDAY = 'Wed'
-    THURSDAY = 'Thu'
-    FRIDAY = 'Fri'
-    SATURDAY = 'Sat'
-    SUNDAY = 'Sun'
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
 
     DAY_CHOICES = [
         (MONDAY, 'Monday'),
@@ -59,7 +59,7 @@ class DoctorSchedule(models.Model):
     ]
 
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='schedules')
-    day = models.CharField(max_length=3, choices=DAY_CHOICES, help_text='요일')
+    day = models.IntegerField(max_length=3, choices=DAY_CHOICES, help_text='요일')
     start_time = models.TimeField(help_text='진료 시작 시간')
     end_time = models.TimeField(help_text='진료 종료 시간')
     lunch_start_time = models.TimeField(blank=True, null=True, help_text='점심 시작 시간')
@@ -108,6 +108,7 @@ class ClinicAppointment(TimeStampModel):
     ]
 
     doctor = models.ForeignKey('Doctor', related_name='clinic_appointments', on_delete=models.CASCADE)
+    user = models.ForeignKey('accounts.User', related_name='clinic_appointments', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING_APPROVE, help_text='진료 요청 상태')
     desired_date = models.DateTimeField(help_text='진료 희망 날짜')
     expired_at = models.DateTimeField(help_text='진료 요청 만료 시간')
