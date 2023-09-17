@@ -12,7 +12,7 @@ class UserService(BaseService):
     model = User
 
     def __init__(self, user=None):
-        super(UserService, self).__init__()
+        super().__init__()
         self._user = user
 
     def list(self):
