@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import SlidingToken
 
 from accounts.models import User
+from accounts.serializers.user_serializer import UserListQsUserSerializer
 from core.utils import exception
 from core.utils.base_service import BaseService
 from core.utils.exception import AlreadyExists
@@ -13,6 +14,11 @@ class UserService(BaseService):
     def __init__(self, user=None):
         super(UserService, self).__init__()
         self._user = user
+
+    def list(self):
+        user = User.objects.get(id=self.user.id)
+        serializer = UserListQsUserSerializer(user)
+        return serializer.data
 
     def login(self, email, password):
         user = authenticate(email=email, password=password)
