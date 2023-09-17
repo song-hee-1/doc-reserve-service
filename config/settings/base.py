@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,6 +30,7 @@ PROJECT_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework_simplejwt',
     'debug_toolbar',
     'corsheaders',
     'django_extensions',
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -130,6 +133,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Register custom user model
+AUTH_USER_MODEL = 'accounts.User'
 
 # Django debug tool bar settings
 INTERNAL_IPS = [
@@ -139,5 +144,17 @@ INTERNAL_IPS = [
 
 # REST_FRAMEWORK settings
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'core.exception_handler.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'core.utils.exception_handler.custom_exception_handler',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=28),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=28),
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
+    'UPDATE_LAST_LOGIN': True,
+    'USER_ID_FIELD': 'email',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.SlidingToken',)
 }
