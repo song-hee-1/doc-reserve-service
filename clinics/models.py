@@ -3,6 +3,14 @@ from django.db import models
 from core.models import TimeStampModel
 
 
+class Speciality(models.Model):
+    code = models.CharField(max_length=50, help_text='진료과 코드')
+    name = models.CharField(max_length=50, help_text='진료과 이름')
+
+    def __str__(self):
+        return self.name
+
+
 class Doctor(TimeStampModel):
     """
     의사 정보를 저장
@@ -10,7 +18,7 @@ class Doctor(TimeStampModel):
     name = models.CharField(max_length=20, help_text='의사 이름')
     introduction = models.TextField(blank=True, help_text='의사 소개')
     credentials = models.TextField(blank=True, help_text='의사 약력')
-    speciality = models.CharField(help_text='진료과')
+    specialities = models.ManyToManyField('Speciality', related_name='doctors', help_text='진료과')
     clinic = models.ForeignKey('Clinic', related_name='doctors', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -68,7 +76,7 @@ class Clinic(TimeStampModel):
     """
     병원 정보 저장
     """
-    name = models.CharField(help_text='병원 이름')
+    name = models.CharField(max_length=100, help_text='병원 이름')
     non_insured_medical_category = models.ManyToManyField(
         'NonInsuredMedicalCategory', related_name='clinics', blank=True, help_text='비급여 진료과목')
 
