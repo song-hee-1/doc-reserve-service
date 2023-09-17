@@ -20,6 +20,9 @@ class Doctor(TimeStampModel):
     credentials = models.TextField(blank=True, help_text='의사 약력')
     specialities = models.ManyToManyField('Speciality', related_name='doctors', help_text='진료과')
     clinic = models.ForeignKey('Clinic', related_name='doctors', on_delete=models.CASCADE)
+    non_insured_medical_category = models.ManyToManyField(
+        'NonInsuredMedicalCategory', related_name='clinics', blank=True, help_text='비급여 진료과목'
+    )
 
     def __str__(self):
         return self.name
@@ -60,8 +63,8 @@ class DoctorSchedule(models.Model):
 
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='schedules')
     day = models.IntegerField(max_length=3, choices=DAY_CHOICES, help_text='요일')
-    start_time = models.TimeField(help_text='진료 시작 시간')
-    end_time = models.TimeField(help_text='진료 종료 시간')
+    start_time = models.TimeField(help_text='진료 시작 시간', null=True)
+    end_time = models.TimeField(help_text='진료 종료 시간', null=True)
     lunch_start_time = models.TimeField(blank=True, null=True, help_text='점심 시작 시간')
     lunch_end_time = models.TimeField(blank=True, null=True, help_text='점심 종료 시간')
     is_day_off = models.BooleanField(default=False, help_text='휴무 여부')
@@ -77,8 +80,6 @@ class Clinic(TimeStampModel):
     병원 정보 저장
     """
     name = models.CharField(max_length=100, help_text='병원 이름')
-    non_insured_medical_category = models.ManyToManyField(
-        'NonInsuredMedicalCategory', related_name='clinics', blank=True, help_text='비급여 진료과목')
 
     def __str__(self):
         return self.name
