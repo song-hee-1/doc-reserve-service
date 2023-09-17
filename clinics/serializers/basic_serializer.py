@@ -3,10 +3,16 @@ from rest_framework import serializers
 from clinics.models import Doctor, DoctorSchedule, Clinic, NonInsuredMedicalCategory, ClinicAppointment
 
 
+class Speciality(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ('id', 'code', 'name')
+
+
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ('id', 'name', 'introduction', 'credentials', 'speciality',)
+        fields = ('id', 'name', 'introduction', 'credentials',)
 
 
 class DoctorScheduleSerializer(serializers.ModelSerializer):

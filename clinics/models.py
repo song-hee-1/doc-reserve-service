@@ -3,7 +3,7 @@ from django.db import models
 from core.models import TimeStampModel
 
 
-class Speciality(models.Model):
+class Speciality(TimeStampModel):
     code = models.CharField(max_length=50, help_text='진료과 코드')
     name = models.CharField(max_length=50, help_text='진료과 이름')
 
