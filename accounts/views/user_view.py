@@ -14,6 +14,11 @@ from core.utils.response_formatter import ResponseFormatter
 class UserViewSet(viewsets.GenericViewSet):
     serializer_class = UserLoginPostSerializer
 
+    def list(self, request: Request):
+        service = UserService(user=request.user)
+        output_dto = service.list()
+        return Response(ResponseFormatter.run(output_dto))
+
     @action(methods=['POST'], detail=False, permission_classes=[IsNotAuthenticated])
     def signup(self, request: Request):
         serializer = UserSignUpPostSerializer(data=request.data)
