@@ -17,7 +17,8 @@ class ClinicRequestAppointmentPostSerializer(serializers.Serializer):
 
 class ClinicRequestAppointmentQsClinicAppointmentSerializer(ClinicAppointmentSerializer):
     patient_name = serializers.CharField(source='user.name')
+    doctor_name = serializers.CharField(source='doctor.name')
 
     class Meta:
         model = ClinicAppointment
-        fields = (*ClinicAppointmentSerializer.Meta.fields, 'patient_name',)
+        fields = (*ClinicAppointmentSerializer.Meta.fields, 'patient_name', 'doctor_name',)
