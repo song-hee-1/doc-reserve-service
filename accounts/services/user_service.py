@@ -31,11 +31,11 @@ class UserService(BaseService):
         )
         return jwt_token_output_dto
 
-    def signup(self, email, password):
+    def signup(self, name, email, password):
         output_dto = self.check_available_email(email)
         if output_dto.get('exists'):
             raise AlreadyExists()
-        user = User.objects.create_user(email=email, password=password)
+        user = User.objects.create_user(email=email, password=password, name=name)
         jwt_token = SlidingToken.for_user(user)
         jwt_token_output_dto = dict(
             access=str(jwt_token),

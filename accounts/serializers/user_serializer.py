@@ -4,6 +4,7 @@ from accounts.models import User
 
 
 class UserSignUpPostSerializer(serializers.Serializer):
+    name = serializers.CharField()
     email = serializers.CharField()
     password = serializers.CharField()
 

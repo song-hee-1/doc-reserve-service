@@ -23,9 +23,9 @@ class UserViewSet(viewsets.GenericViewSet):
     def signup(self, request: Request):
         serializer = UserSignUpPostSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         service = UserService()
         output_dto = service.signup(
+            name=serializer.validated_data['name'],
             email=serializer.validated_data['email'],
             password=serializer.validated_data['password']
         )
