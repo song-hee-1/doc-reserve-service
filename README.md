@@ -35,12 +35,12 @@
 ### 데이터베이스 모델링
 ##### 전체(시스템 포함) 
 
-![erd](https://github.com/song-hee-1/doc-reserve-service/assets/83492367/638a3405-90d2-4fa2-b1c5-ed8ebcf58f91)
+![erd](https://github.com/song-hee-1/doc-reserve-service/assets/83492367/d01b162b-6d9e-422d-8c39-24f8b73df067)
 
 
 
 ##### 앱(시스템 제외)
-![my_project_model](https://github.com/song-hee-1/doc-reserve-service/assets/83492367/b4c5839d-6146-49c3-bb99-bf5c33348d42)
+![my_project_model](https://github.com/song-hee-1/doc-reserve-service/assets/83492367/74ed99fb-f392-41a2-a666-feea506e791c)
 
 
 - 데이터의 추적성 및 관리를 위하여 `created_at`, `updated_at` 을 가지고 있는 `core` 앱에 TimeStampModel을 모듈화
