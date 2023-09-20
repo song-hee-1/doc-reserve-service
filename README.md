@@ -164,7 +164,7 @@ admin ID / PW : admin@offical.net ,  0000
 3. 서버 실행
 	`python manage.py runserver` 
 
-** `api/schema/swagger-ui` 에 접속하시면 UI와 함께 API별로 테스트할 수 있습니다 **
+**`api/schema/swagger-ui` 에 접속하시면 UI와 함께 API별로 테스트할 수 있습니다.**
 
 </br>
 
